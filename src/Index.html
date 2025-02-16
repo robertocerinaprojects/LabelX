@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap');
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: 'Open Sans', sans-serif;
+        background-color: #f0f2f5;
+      }
+
+      .toplight {
+        background-color: #fff;
+        border-bottom: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+        font-size: 1rem;
+        color: #333;
+      }
+      .container {
+        display: flex;
+        height: calc(100vh - 50px);
+      }
+      .left-panel {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      .right-panel {
+        width: 400px;
+        overflow-y: auto;
+        background-color: #fff;
+        padding: 20px;
+        box-sizing: border-box;
+        border-left: 1px solid #ccc;
+      }
+      .id-card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+      }
+      .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .profile-pic {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        object-fit: cover;
+        margin-right: 15px;
+        border: 2px solid #ddd;
+      }
+      .profile-info h2 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #2c3e50;
+      }
+      .profile-info p {
+        margin: 4px 0;
+        color: #555;
+      }
+      .tweets {
+        margin-top: 15px;
+      }
+      .tweet {
+        background-color: #f9f9f9;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      .tweet-time {
+        font-size: 0.8rem;
+        color: #999;
+      }
+      .tweet-text {
+        margin-top: 5px;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+      }
+      .label-section h2 {
+        margin-top: 0;
+      }
+      .feature-question {
+        border: 1px solid #eee;
+        border-radius: 4px;
+        padding: 10px;
+        margin-bottom: 15px;
+      }
+      .feature-label {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      button {
+        background: #3498db;
+        color: #fff;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      button:hover {
+        background: #2980b9;
+      }
+      .radio-option {
+        margin-bottom: 5px;
+        display: block;
+      }
+      .error-message {
+        color: red;
+        font-size: 0.9rem;
+        display: none;
+        margin-top: 8px;
+      }
+      .slider-wrapper {
+        position: relative;
+        margin: 10px 0;
+      }
+      .slider-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+        pointer-events: none;
+      }
+      .slider-labels span {
+        font-style: italic;
+        font-size: 0.9rem;
+      }
+      .slider-center-text {
+        position: absolute;
+        top: -16px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-style: italic;
+        font-size: 0.9rem;
+        color: #666;
+        pointer-events: none;
+      }
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        background-color: transparent;
+      }
+      input[type="range"]::-webkit-slider-runnable-track {
+        height: 6px;
+        background-color: springgreen;
+        border-radius: 3px;
+      }
+      input[type="range"]::-moz-range-track {
+        height: 6px;
+        background-color: springgreen;
+        border-radius: 3px;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 20px;
+        width: 20px;
+        margin-top: -7px;
+        background-color: lightcoral;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      input[type="range"]::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        background-color: lightcoral;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      The following variables come from Code.gs (HtmlTemplate):
+        rowNumber, profileImg, username, location, desc, tweets,
+        featureCodes, labeledCount, totalCount
+    -->
+    <? 
+      var altUrl = (profileImg || "").replace("_normal", ""); // if Twitter images have '_normal'
+      var labeled = labeledCount || 0;
+      var total   = totalCount || 0;
+
+      // Example featureMap: you can rename or remove real-world references
+      var featureMap = {
+        "FEATURE1": {
+          name: "Feature 1 (Generic)",
+          options: [
+            "F1OptionA",
+            "F1OptionB",
+            "F1OptionC"
+          ]
+        },
+        "FEATURE2": {
+          name: "Feature 2 (Generic)",
+          options: [
+            "F2OptionA",
+            "F2OptionB",
+            "F2OptionC"
+          ]
+        },
+        "STATE": {
+          name: "State of Residence",
+          options: [] // We'll handle as dropdown
+        }
+      };
+
+      // Example list of US states / placeholders
+      var stateChoices = [
+        "Alabama","Alaska","Arizona","Arkansas","California","...","Not from the US"
+      ];
+    ?>
+    
+    <!-- Top banner: how many labeled vs. total -->
+    <div class="toplight">
+      Rows labeled so far: <strong><?= labeled ?></strong> &nbsp;|&nbsp;
+      Yet to be labeled: <strong><?= (total - labeled) ?></strong>
+    </div>
+
+    <!-- Main layout -->
+    <div class="container">
+      <!-- LEFT: user data -->
+      <div class="left-panel">
+        <div class="id-card">
+          <div class="profile-header">
+            <img
+              class="profile-pic"
+              src="<?= altUrl ?>"
+              alt="Profile Image"
+              onerror="this.onerror=null;this.src='<?= profileImg ?>';"
+            />
+            <div class="profile-info">
+              <h2><?= name ?></h2>
+              <h2>@<?= username ?></h2>
+              <p><?= location ?></p>
+            </div>
+          </div>
+          <p style="white-space: pre-wrap;"><?= desc ?></p>
+        </div>
+
+        <div class="id-card tweets">
+          <h3>Recent Posts/Tweets</h3>
+          <? if (tweets.length === 0) { ?>
+            <p>No tweets found for this user.</p>
+          <? } else {
+               for (var i=0; i<tweets.length; i++) {
+                 var tw = tweets[i];
+          ?>
+            <div class="tweet">
+              <div class="tweet-time"><?= tw.createdAt ?></div>
+              <div class="tweet-text"><?= tw.text ?></div>
+            </div>
+          <? } } ?>
+        </div>
+      </div>
+
+      <!-- RIGHT: labeling form -->
+      <div class="right-panel">
+        <div class="label-section">
+          <h2>Label This User (Row #<?= rowNumber ?>)</h2>
+
+          <form id="labelForm" method="post" action="<?= ScriptApp.getService().getUrl() ?>">
+            <input type="hidden" name="action" value="saveLabels" />
+            <input type="hidden" name="rowNumber" value="<?= rowNumber ?>" />
+            <input type="hidden" name="featureCodes" value="<?= featureCodes.join(',') ?>" />
+
+            <!-- "Notes" input -->
+            <label style="display:block; margin-bottom:5px;">Notes:</label>
+            <input type="text" name="notesInput" style="width:100%; padding:5px;" required />
+
+            <div style="margin: 15px 0; border-bottom:1px solid #ccc;"></div>
+
+            <!-- Loop over selected features -->
+            <?
+              for (var i=0; i<featureCodes.length; i++) {
+                var code = featureCodes[i].trim();
+                if (!code) continue;
+
+                // If it's the "STATE" feature, show a dropdown
+                if (code === "STATE") {
+            ?>
+              <div class="feature-question">
+                <div class="feature-label">Which State/Region does the user live in?</div>
+                <select name="feat_STATE" required style="width:100%; padding:5px;">
+                  <option value="">-- select one --</option>
+                  <? for (var s=0; s<stateChoices.length; s++) {
+                       var stName = stateChoices[s];
+                  ?>
+                  <option value="<?= stName ?>"><?= stName ?></option>
+                  <? } ?>
+                </select>
+              </div>
+            <?
+                  continue;
+                }
+
+                // Otherwise, check the featureMap
+                var feat = featureMap[code] || {
+                  name: code,
+                  options: ["OptionA", "OptionB", "OptionC"]
+                };
+            ?>
+              <div class="feature-question">
+                <div class="feature-label"><?= feat.name ?></div>
+                <? for (var j=0; j<feat.options.length; j++) {
+                   var opt = feat.options[j];
+                ?>
+                  <label class="radio-option">
+                    <input type="radio" name="feat_<?= code ?>" value="<?= opt ?>" required />
+                    <?= opt ?>
+                  </label>
+                <? } ?>
+
+                <!-- Speculation slider -->
+                <div class="slider-wrapper">
+                  <div class="slider-labels">
+                    <span>observed</span>
+                    <span>speculative</span>
+                  </div>
+                  <div class="slider-center-text">Select a value</div>
+                  <input
+                    type="range"
+                    name="feat_<?= code ?>_speculation"
+                    min="1"
+                    max="5"
+                    step="1"
+                    value="3"
+                    data-changed="false"
+                    required
+                  />
+                </div>
+              </div>
+            <? } ?>
+
+            <!-- Submit button -->
+            <div style="margin-top:20px;">
+              <button type="submit">Submit & Next</button>
+            </div>
+
+            <p class="error-message" id="errorMsg">
+              Please answer all questions and move each slider before submitting.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Mark a slider as changed once the user moves it
+      document.querySelectorAll('input[type="range"][name*="_speculation"]').forEach(slider => {
+        slider.addEventListener('input', () => {
+          if (slider.getAttribute('data-changed') === 'false') {
+            slider.setAttribute('data-changed', 'true');
+            const overlay = slider.parentElement.querySelector('.slider-center-text');
+            if (overlay) overlay.style.display = 'none';
+          }
+        });
+      });
+
+      // Validate required fields on submit
+      const form = document.getElementById('labelForm');
+      const errorMsg = document.getElementById('errorMsg');
+
+      form.addEventListener('submit', function(e) {
+        const featureCodes = "<?= featureCodes.join(',') ?>".split(',').filter(x => x.trim().length > 0);
+        let allGood = true;
+
+        for (let i = 0; i < featureCodes.length; i++) {
+          const code = featureCodes[i];
+
+          // STATE check
+          if (code === "STATE") {
+            const sel = form.querySelector('[name="feat_STATE"]');
+            if (!sel || !sel.value.trim()) {
+              allGood = false;
+              break;
+            }
+            continue;
+          }
+
+          // Check radio group
+          const mainGroup = form.querySelectorAll('[name="feat_' + code + '"]');
+          if (!isRadioGroupSelected(mainGroup)) {
+            allGood = false;
+            break;
+          }
+
+          // Check speculation slider
+          const slider = form.querySelector('[name="feat_' + code + '_speculation"]');
+          if (!slider || slider.getAttribute('data-changed') === 'false') {
+            allGood = false;
+            break;
+          }
+        }
+
+        if (!allGood) {
+          e.preventDefault();
+          errorMsg.style.display = 'block';
+        }
+      });
+
+      function isRadioGroupSelected(radioNodeList) {
+        for (let r of radioNodeList) {
+          if (r.checked) return true;
+        }
+        return false;
+      }
+    </script>
+  </body>
+</html>
