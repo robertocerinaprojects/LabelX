@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f4f4f4;
+      }
+      .toplight {
+        background-color: #fff;
+        border-bottom: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+        font-size: 1rem;
+        color: #333;
+      }
+      h1 {
+        margin: 20px;
+      }
+      .feature-boxes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 0 20px;
+      }
+      .feature-box {
+        background: #fff;
+        padding: 10px 15px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        user-select: none;
+      }
+      .feature-box.selected {
+        background: #3498db;
+        color: #fff;
+        border-color: #2980b9;
+      }
+      .actions {
+        margin: 20px;
+      }
+      button {
+        color: #fff;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+      .select-buttons {
+        margin: 15px 20px;
+        display: flex;
+        gap: 10px;
+      }
+      #selectAllBtn {
+        background: lightblue;
+        color: black;
+      }
+      #deselectAllBtn {
+        background: lightblue;
+        color: black;
+      }
+      .actions button {
+        background: #2ecc71;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- The top banner with labeledCount & totalCount -->
+    <div class="toplight">
+      Rows labeled so far: <strong><?= labeledCount ?></strong> &nbsp;|&nbsp;
+      Yet to be labeled: <strong><?= (totalCount - labeledCount) ?></strong>
+    </div>
+
+    <h1>Select Which Feature Categories You Want to Label</h1>
+
+    <div class="feature-boxes" id="boxes">
+      <!-- Example feature boxes: Customize or rename them as you see fit -->
+      <div class="feature-box" data-code="FEATURE1">Feature 1</div>
+      <div class="feature-box" data-code="FEATURE2">Feature 2</div>
+      <div class="feature-box" data-code="STATE">State of Residence?</div>
+    </div>
+
+    <div class="select-buttons">
+      <button type="button" id="selectAllBtn">Select All</button>
+      <button type="button" id="deselectAllBtn">Deselect All</button>
+    </div>
+
+    <form method="post" action="<?= ScriptApp.getService().getUrl() ?>">
+      <input type="hidden" name="action" value="selectFeatures" />
+      <input type="hidden" id="chosenFeatures" name="chosenFeatures" value="" />
+
+      <div class="actions">
+        <button type="submit">Start Labeling</button>
+      </div>
+    </form>
+
+    <script>
+      const boxes = document.querySelectorAll('.feature-box');
+      const chosenInput = document.getElementById('chosenFeatures');
+      const selectAllBtn = document.getElementById('selectAllBtn');
+      const deselectAllBtn = document.getElementById('deselectAllBtn');
+
+      function updateChosen() {
+        const selectedCodes = [];
+        document.querySelectorAll('.feature-box.selected')
+          .forEach(b => selectedCodes.push(b.getAttribute('data-code')));
+        chosenInput.value = selectedCodes.join(',');
+        checkButtonColors();
+      }
+
+      function checkButtonColors() {
+        const total = boxes.length;
+        const selectedCount = document.querySelectorAll('.feature-box.selected').length;
+
+        if (selectedCount === total) {
+          selectAllBtn.style.backgroundColor = 'green';
+        } else {
+          selectAllBtn.style.backgroundColor = 'lightblue';
+        }
+        if (selectedCount === 0) {
+          deselectAllBtn.style.backgroundColor = 'green';
+        } else {
+          deselectAllBtn.style.backgroundColor = 'lightblue';
+        }
+      }
+
+      // Click toggles selection
+      boxes.forEach(box => {
+        box.addEventListener('click', () => {
+          box.classList.toggle('selected');
+          updateChosen();
+        });
+      });
+
+      // Select all by default on page load
+      window.addEventListener('DOMContentLoaded', () => {
+        boxes.forEach(box => box.classList.add('selected'));
+        updateChosen();
+      });
+
+      // Buttons
+      selectAllBtn.addEventListener('click', () => {
+        boxes.forEach(box => box.classList.add('selected'));
+        updateChosen();
+      });
+      deselectAllBtn.addEventListener('click', () => {
+        boxes.forEach(box => box.classList.remove('selected'));
+        updateChosen();
+      });
+    </script>
+  </body>
+</html>
