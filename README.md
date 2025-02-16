@@ -82,6 +82,20 @@ Plus whichever data columns you want to display for labeling (e.g., `profile_ima
 
 Pull requests and suggestions are welcome. For major changes, please open an issue first to discuss what you’d like to change.
 
+## Citation
+
+If you use this project in your research or work, please cite:
+
+```bibtex
+@misc{Cerina2025LabelX,
+  author       = {Roberto Cerina},
+  title        = {LabelX: A Google Apps Script-Based Labeling Platform for Social Media Profiles},
+  howpublished = {GitHub repository},
+  year         = {2025},
+  url          = {https://github.com/robertocerinaprojects/LabelX}
+}
+```
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
